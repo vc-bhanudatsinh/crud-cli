@@ -17,12 +17,48 @@ const getFileData = async () => {
     console.log("getFileData error", error.message);
   }
 };
+const getSingleUser = async () => {
+  try {
+    const getEmailQuestion = {
+      type: "input",
+      name: "Get Email",
+      message: "Please enter the email of the user",
+    };
 
-const getData = async () => {
+    const emailAnswer = await prompt(getEmailQuestion);
+    const emailOfUser = emailAnswer[getEmailQuestion.name];
+    let fileData = await getFileData();
+    fileData = JSON.parse(fileData);
+    const user = fileData.find((user) => user.email === emailOfUser);
+    return console.log("User --", user);
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+const getAllUsersData = async () => {
   try {
     let fileData = await getFileData();
     console.log("file read");
-    console.log("DB Data ---", JSON.parse(fileData));
+    return console.log("DB Data ---", JSON.parse(fileData));
+  } catch (error) {
+    console.error("error catch --", error);
+  }
+};
+const getData = async () => {
+  try {
+    const getUserQuestion = {
+      type: "list",
+      name: "getUserOption",
+      message: "Please select the option",
+      choices: ["Get All Users", "Get Single Users"],
+    };
+    const getDataOption = [getAllUsersData, getSingleUser];
+    const answer = await prompt(getUserQuestion);
+    const getOption = answer[getUserQuestion.name];
+    const index = getUserQuestion.choices.indexOf(getOption);
+    if (index === -1) return console.log("Option not found");
+    await getDataOption[index]();
   } catch (error) {
     console.error("error catch --", error);
   }
